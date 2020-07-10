@@ -1,38 +1,29 @@
 FROM ubuntu:latest
 
-MAINTANER Heizel Kim <hrkim0624@gmail.com>
+LABEL maintainer="Heizel Kim <hrkim0624@gmail.com>"
 
-RUN apt-get clean && \
-    apt-get update && \
-    apt-get install python3-pip  \
-        pkg-config \
-        curl \
-        wget \
-    apt-get clean && apt-get autoremove -y && \
-    rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    curl \
+ && rm -rf /var/lib/apt/lists/*
 
-COPY ./requirements.txt SearchCompany/app/requirements.txt
-
-VOLUME ["SearchCompany"]
 WORKDIR SearchCompany
 
-RUN pip install -r requirements.txt
+RUN mkdir ./app/
 
-COPY . SearchCompany
+COPY ./app/ ./app/
+COPY ./manage.py manage.py
+COPY ./requirements.txt requirements.txt
 
-ENTRYPOINT [ "python" ]
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD [ "manage.py run" ]
+EXPOSE 5000
 
-# Set python as python3
+RUN chmod u+x manage.py
+
+ENTRYPOINT [ "python3" ]
+
+CMD [ "manage.py", "run" ]
+
 RUN echo alias python=/usr/bin/python3 >> /root/.bashrc
-
-# Fix locale as US.UTF-8.
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-
-
-# DOCKERFILE for Peer.
 

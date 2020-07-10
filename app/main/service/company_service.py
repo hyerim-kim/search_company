@@ -7,7 +7,7 @@ from app.main.model.company_info import CompanyInfo
 from app.main.service import save_change, delete_all
 
 
-def add_company(company_id: str):
+def add_a_company(company_id: str):
     company = Company.query.filter_by(company_id=company_id).first()
     if not company:
         new_company = Company(company_id=company_id)
@@ -30,11 +30,7 @@ def get_company_by_id(company_id: str = None):
     if company:
         return make_response(jsonify(company_id=company.company_id), 200)
     else:
-        response_object = {
-            'status': 'fail',
-            'message': f'There is no any company by id({company_id}).',
-        }
-        return make_response(response_object, 200)
+        return make_response({}, 204)
 
 
 def get_all_companies():
@@ -47,15 +43,21 @@ def get_all_companies():
     return make_response(companies, 200 if companies else 204)
 
 
-def delete_company(company_id: str):
+def delete_a_company(company_id: str):
     data_list_for_delete = CompanyInfo.query.filter_by(company_id=company_id).all()
     company = Company.query.filter_by(company_id=company_id).first()
     if company:
         data_list_for_delete.append(company)
-    delete_all(data_list_for_delete)
+        delete_all(data_list_for_delete)
 
-    response_object = {
-        'status': 'success',
-        'message': 'Successfully deleted.'
-    }
+        response_object = {
+            'status': 'success',
+            'message': 'Successfully deleted.'
+        }
+    else:
+        response_object = {
+            'status': 'fail',
+            'message': f'There is no the Company by id({company_id}).'
+        }
+
     return make_response(response_object, 200)

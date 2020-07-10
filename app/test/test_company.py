@@ -22,22 +22,12 @@ class TestCompany:
         else:
             assert False
 
-    def test_get_all_companies(self, client: 'client'):
-        response = client.get('/companies')
-        if response.status_code == 200:
-            data = json.loads(response.data.decode("utf-8"))
-            assert TestCompany.NEW_COMPANY in data['companies']
-        else:
-            assert False
-
     def test_delete_a_company(self, client: 'client'):
         response = client.post(f'/company/delete/{TestCompany.NEW_COMPANY}')
         assert response.status_code == 200
 
         response = client.get(f'/company/{TestCompany.NEW_COMPANY}')
-        data = json.loads(response.data.decode("utf-8"))
-        assert data['status'] == 'fail'
+        assert response.status_code == 204
 
         response = client.get(f'/company/{TestCompany.NEW_COMPANY}/info')
-        data = json.loads(response.data.decode("utf-8"))
-        assert data['status'] == 'fail'
+        assert response.status_code == 204

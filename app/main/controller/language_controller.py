@@ -13,9 +13,9 @@ def get_all_languages():
     return language_list if language_list else {}
 
 
-@language_api.route('/language/add/<string:language_id>|<string:prefix>', methods=['POST'])
-def add_a_language(language_id: str, prefix: str):
-    return language_service.add_a_language(language_id, prefix)
+@language_api.route('/language/register/<string:language_id>', methods=['POST'])
+def add_a_language(language_id: str):
+    return language_service.add_a_language(language_id)
 
 
 @language_api.route('/language/delete/<string:language_id>', methods=['POST'])

@@ -24,7 +24,6 @@ class TestingConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     TESTING = True
-    ALEMBIC_INI = '/Users/hyerim0624/Documents/study/SearchCompay/migrations/alembic.ini'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
 

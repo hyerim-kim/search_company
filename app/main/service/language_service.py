@@ -1,20 +1,20 @@
 # -- coding: utf-8 --
 from typing import List
 
-from flask import abort, make_response, current_app
+from flask import abort, make_response, current_app, jsonify
 
 from app.main.model.language import Language
 from app.main.service import save_change, delete
 
 
-def add_a_language(language_id: str, prefix: str):
-    language = Language.query.filter_by(language_id=language_id, prefix=prefix).first()
+def add_a_language(language_id: str):
+    language = Language.query.filter_by(language_id=language_id).first()
     if not language:
-        new_language = Language(language_id=language_id, prefix=prefix)
+        new_language = Language(language_id=language_id)
         save_change(new_language)
         response_object = {
             'status': 'success',
-            'message': 'Successfully deleted.'
+            'message': 'Successfully registered.'
         }
         return make_response(response_object, 201)
     else:
@@ -22,36 +22,7 @@ def add_a_language(language_id: str, prefix: str):
             'status': 'fail',
             'message': f'The language({language_id}) already exists.',
         }
-        return make_response(response_object, 409)
-
-
-def get_language_prefixes() -> dict:
-    languages: List[Language] = Language.query.all()
-    prefixes = dict()
-    for language in languages:
-        prefixes[language.language_id] = language.prefix
-
-    return prefixes
-
-
-def get_a_language_prefix(language_id: str) -> str:
-    language: Language = Language.query.filter_by(language_id=language_id).first()
-    if not language:
-        abort(204)
-
-    return language.prefix
-
-
-def get_a_language(language_id: str):
-    return Language.query.filter_by(language_id=language_id)
-
-
-def get_all_languages():
-    languages = {}
-    for language in Language.query.all():
-        languages[language.language_id] = language.prefix
-
-    return make_response(languages, 200 if languages else 204)
+        return make_response(response_object, 200)
 
 
 def delete_a_language(language_id: str):
@@ -67,7 +38,7 @@ def delete_a_language(language_id: str):
         delete(language)
         response_object = {
             'status': 'success',
-            'message': 'Successfully registered.'
+            'message': 'Successfully deleted.'
         }
     else:
         response_object = {
@@ -76,6 +47,14 @@ def delete_a_language(language_id: str):
         }
 
     return make_response(response_object, 200)
+
+
+def get_all_languages():
+    languages = {'languages': []}
+    for language in Language.query.all():
+        languages['languages'].append(language.language_id)
+
+    return make_response(languages, 200 if languages else 204)
 
 
 def set_default_locale(language_id: str):
